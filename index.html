@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>رسائلي لك</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #fff1f2, #eef2ff);
+      color: #1f2937;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      color: white;
+      border-radius: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(124, 58, 237, 0.18);
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    .hero p {
+      margin: 10px 0 0;
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid #e9d5ff;
+      border-radius: 22px;
+      box-shadow: 0 20px 40px rgba(88, 28, 135, 0.08);
+      padding: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #ddd6fe;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 1rem;
+      background: #fff;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus {
+      outline: 2px solid rgba(168, 85, 247, 0.12);
+      border-color: #a78bfa;
+    }
+
+    textarea {
+      min-height: 140px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: white;
+      padding: 14px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logout-btn {
+      background: #111827;
+    }
+
+    .message-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .message {
+      background: white;
+      border: 1px solid #ede9fe;
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.04);
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sender {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .date {
+      color: #6b7280;
+      font-size: 0.8rem;
+    }
+
+    .message p {
+      margin: 0;
+      line-height: 1.9;
+      color: #374151;
+      font-size: 1rem;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 26px 20px;
+      border: 1px dashed #c4b5fd;
+      border-radius: 18px;
+      color: #4b5563;
+      background: rgba(255,255,255,0.7);
+    }
+
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(76, 29, 149, 0.94), rgba(236, 72, 153, 0.92));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .lock-box {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 22px;
+      padding: 26px;
+      backdrop-filter: blur(8px);
+      color: white;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+    }
+
+    .lock-box h2 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .lock-box p {
+      text-align: center;
+      margin: 0 0 18px;
+      opacity: 0.9;
+    }
+
+    .lock-box input {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+
+    .lock-box input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .lock-box button {
+      width: 100%;
+      background: white;
+      color: #7c3aed;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="lockScreen" class="lock-screen">
+    <div class="lock-box">
+      <h2>رسائلي لك</h2>
+      <p>أدخل كلمة المرور للعرض</p>
+      <input id="passInput" type="password" placeholder="كلمة المرور" />
+      <button id="unlockBtn">دخول</button>
+    </div>
+  </div>
+
+  <div id="app" class="page hidden">
+    <div class="wrap">
+      <header class="hero">
+        <h1>لـ <span id="personName">اسم الشخص</span></h1>
+        <p>رسائل خاصة بيني وبينك</p>
+      </header>
+
+      <section class="panel">
+        <form id="messageForm">
+          <div class="form-grid">
+            <input id="sender" type="text" placeholder="من:" required />
+            <textarea id="message" placeholder="اكتب رسالتك..." required></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="submit">إضافة رسالة</button>
+            <button id="logoutBtn" type="button" class="logout-btn">تسجيل خروج</button>
+          </div>
+        </form>
+
+        <div class="message-list" id="messageList"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const personName = "A";
+    const PASSCODE = "2222"; // غيّر هذه القيمة إلى كلمة المرور التي تريدها
+    const STORAGE_KEY = "private_messages_v1";
+    const SESSION_KEY = "private_session";
+
+    document.getElementById("personName").textContent = personName;
+
+    const defaultMessages = [
+      {
+        sender: "",
+        text: "",
+        date: new Date().toLocaleDateString("ar-EG")
+      },
+      {
+        sender: "",
+        text: "",
+        date: new Date().toLocaleDateString("ar-EG")
+      }
+    ];
+
+    function getMessages() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultMessages));
+        return [...defaultMessages];
+      }
+      try {
+        return JSON.parse(saved);
+      } catch {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultMessages));
+        return [...defaultMessages];
+      }
+    }
+
+    function saveMessages(messages) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    }
+
+    function renderMessages() {
+      const list = document.getElementById("messageList");
+      list.innerHTML = "";
+      const messages = getMessages();
+
+      if (!messages.length) {
+        list.innerHTML = '<div class="empty">لا توجد رسائل بعد.</div>';
+        return;
+      }
+
+      messages.forEach((msg) => {
+        const item = document.createElement("article");
+        item.className = "message";
+
+        item.innerHTML = `
+          <div class="message-header">
+            <span class="sender">${msg.sender}</span>
+            <span class="date">${msg.date}</span>
+          </div>
+          <p>${msg.text}</p>
+        `;
+
+        list.appendChild(item);
+      });
+    }
+
+    function unlockApp() {
+      const entered = document.getElementById("passInput").value.trim();
+      if (entered === PASSCODE) {
+        sessionStorage.setItem(SESSION_KEY, "true");
+        document.getElementById("lockScreen").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+        renderMessages();
+      } else {
+        alert("كلمة المرور غير صحيحة");
+      }
+    }
+
+    function lockApp() {
+      sessionStorage.removeItem(SESSION_KEY);
+      document.getElementById("lockScreen").classList.remove("hidden");
+      document.getElementById("app").classList.add("hidden");
+      document.getElementById("passInput").value = "";
+      document.getElementById("passInput").focus();
+    }
+
+    document.getElementById("unlockBtn").addEventListener("click", unlockApp);
+    document.getElementById("passInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") unlockApp();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", lockApp);
+
+    document.getElementById("messageForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const sender = document.getElementById("sender").value.trim();
+      const text = document.getElementById("message").value.trim();
+
+      if (!sender || !text) return;
+
+      const messages = getMessages();
+      messages.unshift({
+        sender,
+        text,
+        date: new Date().toLocaleDateString("ar-EG")
+      });
+
+      saveMessages(messages);
+      renderMessages();
+
+      e.target.reset();
+    });
+
+    if (sessionStorage.getItem(SESSION_KEY) === "true") {
+      document.getElementById("lockScreen").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
+      renderMessages();
+    } else {
+      document.getElementById("passInput").focus();
+    }
+  </script>
+</body>
+</html>
